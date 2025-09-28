@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Подборки</h2>
+<a href="/collections/create">Создать подборку</a>
+<ul>
+  {% for c in collections %}
+    <li><a href="/collections/{{ c.id }}">{{ c.title }}</a> — {{ c.created_at }}</li>
+  {% else %}
+    <li>Нет подборок</li>
+  {% endfor %}
+</ul>
+{% endblock %}

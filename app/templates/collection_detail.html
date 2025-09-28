@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ collection.title }}</h2>
+<p>{{ collection.description }}</p>
+
+<h3>Статьи в подборке</h3>
+<ul>
+  {% for a in collection.articles %}
+    <li><a href="/articles/{{ a.id }}">{{ a.title }}</a></li>
+  {% else %}
+    <li>Нет статей в подборке</li>
+  {% endfor %}
+</ul>
+{% endblock %}

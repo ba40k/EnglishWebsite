@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Последние статьи</h2>
+<ul>
+  {% for a in articles %}
+    <li><a href="/articles/{{ a.id }}">{{ a.title }}</a> — {{ a.author }}</li>
+  {% else %}
+    <li>Нет статей</li>
+  {% endfor %}
+</ul>
+
+<h2>Подборки</h2>
+<ul>
+  {% for c in collections %}
+    <li><a href="/collections/{{ c.id }}">{{ c.title }}</a></li>
+  {% else %}
+    <li>Нет подборок</li>
+  {% endfor %}
+</ul>
+
+<h2>Тесты</h2>
+<ul>
+  {% for t in tests %}
+    <li><a href="/tests/{{ t.id }}">{{ t.title }}</a></li>
+  {% else %}
+    <li>Нет тестов</li>
+  {% endfor %}
+</ul>
+{% endblock %}

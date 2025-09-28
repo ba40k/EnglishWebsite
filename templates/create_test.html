@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Создать тест</h2>
+<form action="/tests/create" method="post">
+  <label>Название</label><br>
+  <input name="title" required><br>
+  <label>Описание</label><br>
+  <input name="description"><br>
+  <label>Questions JSON</label><br>
+  <textarea name="questions_json" rows="10" placeholder='[{"text":"Q1","choices":["A","B"],"correct_index":0}]'></textarea><br>
+  <small>questions_json — JSON-массив вопросов с полями text, choices и correct_index</small><br>
+  <button type="submit">Создать</button>
+</form>
+{% endblock %}

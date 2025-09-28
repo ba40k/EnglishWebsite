@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ test.title }}</h2>
+<p>{{ test.description }}</p>
+<form action="/tests/{{ test.id }}/submit" method="post" id="testform">
+  {% for q in questions %}
+    <div>
+      <p><strong>{{ loop.index }}. {{ q.text }}</strong></p>
+      {% for choice in q.choices %}
+        <label>
+          <input type="radio" name="q{{ q.id }}" value="{{ loop.index0 }}"> {{ choice }}
+        </label><br>
+      {% endfor %}
+    </div>
+  {% endfor %}
+  <input type="hidden" name="answers" id="answers">
+  <button type="button" onclick="submitAnswers()">Отправить</button>
+</form>
+
+<script>
+function submitAnswers(){
+  const data = {};
+  {% for q in questions %}
+    const els = document.getElementsByName('q{{ q.id }}');
+    let sel = null;
+    for(let i=0;i<els.length;i++){ if(els[i].checked){ sel = els[i].value; break; } }
+    if(sel !== null) data['{{ q.id }}'] = parseInt(sel);
+  {% endfor %}
+  document.getElementById('answers').value = JSON.stringify(data);
+  document.getElementById('testform').submit();
+}
+</script>
+{% endblock %}

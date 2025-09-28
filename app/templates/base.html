@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mini CMS</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <header>
+    <h1><a href="/">Mini CMS</a></h1>
+    <nav>
+      <a href="/articles">Статьи</a> |
+      <a href="/collections">Подборки</a> |
+      <a href="/tests">Тесты</a>
+    </nav>
+  </header>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  <footer>
+    <small>Минимальный пример на FastAPI</small>
+  </footer>
+</body>
+</html>

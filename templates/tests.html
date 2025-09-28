@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Тесты</h2>
+<a href="/tests/create">Создать тест</a>
+<ul>
+  {% for t in tests %}
+    <li><a href="/tests/{{ t.id }}">{{ t.title }}</a></li>
+  {% else %}
+    <li>Нет тестов</li>
+  {% endfor %}
+</ul>
+{% endblock %}

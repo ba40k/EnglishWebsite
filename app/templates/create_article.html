@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Создать статью</h2>
+<form action="/articles/create" method="post">
+  <label>Заголовок</label><br>
+  <input name="title" required><br>
+  <label>Текст</label><br>
+  <textarea name="body" rows="8" required></textarea><br>
+  <label>Автор</label><br>
+  <input name="author"><br>
+  <label>ID подборок (через запятую)</label><br>
+  <input name="collection_ids" placeholder="1,2"><br>
+  <button type="submit">Создать</button>
+</form>
+{% endblock %}

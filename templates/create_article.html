@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Статьи</h2>
+<a href="/articles/create">Создать статью</a>
+<ul>
+  {% for a in articles %}
+    <li><a href="/articles/{{ a.id }}">{{ a.title }}</a> — {{ a.author }}</li>
+  {% else %}
+    <li>Нет статей</li>
+  {% endfor %}
+</ul>
+{% endblock %}

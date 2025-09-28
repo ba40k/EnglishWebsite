@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<article>
+  <h2>{{ article.title }}</h2>
+  <p><small>Автор: {{ article.author }} | {{ article.created_at }}</small></p>
+  <div>{{ article.body | safe }}</div>
+
+  <section>
+    <h3>Комментарии</h3>
+    <ul>
+      {% for c in article.comments %}
+        <li><strong>{{ c.author }}</strong>: {{ c.text }} <small>{{ c.created_at }}</small></li>
+      {% else %}
+        <li>Пока нет комментариев</li>
+      {% endfor %}
+    </ul>
+
+    <h4>Оставить комментарий</h4>
+    <form action="/articles/{{ article.id }}/comments" method="post">
+      <input type="text" name="author" placeholder="Ваше имя">
+      <br>
+      <textarea name="text" required placeholder="Текст комментария"></textarea>
+      <br>
+      <button type="submit">Отправить</button>
+    </form>
+  </section>
+</article>
+{% endblock %}
