@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from pathlib import Path
 import json
 
-from . import models, crud, schemas
+from . import models, crud, schemas, ai_helper
 
 BASE_DIR = Path(__file__).resolve().parent
 DB_URL = f"sqlite:///{str(BASE_DIR / 'database.db')}"
@@ -57,7 +57,26 @@ def article_detail(request: Request, article_id: int, db=Depends(get_db)):
     article = crud.get_article(db, article_id)
     if not article:
         raise HTTPException(status_code=404, detail="Article not found")
-    return templates.TemplateResponse("article_detail.html", {"request": request, "article": article})
+    # Generate AI summary and vocabulary
+    ai_content = ai_helper.generate_article_summary(article.title, article.body)
+    return templates.TemplateResponse("article_detail.html", {
+        "request": request, 
+        "article": article, 
+        "ai_summary": ai_content.get("summary", ""),
+        "ai_vocabulary": ai_content.get("vocabulary", [])
+    })
+
+@app.post("/articles/{article_id}/ask-ai")
+def ask_ai_about_article(article_id: int, question: str = Form(...), db=Depends(get_db)):
+    """Ask AI a question about an article."""
+    article = crud.get_article(db, article_id)
+    if not article:
+        raise HTTPException(status_code=404, detail="Article not found")
+    
+    # Ask AI the question
+    answer = ai_helper.ask_about_article(article.title, article.body, question)
+    
+    return {"answer": answer}
 
 @app.post("/articles/{article_id}/comments")
 def add_comment(article_id: int, author: str = Form("Anonymous"), text: str = Form(...), db=Depends(get_db)):
@@ -130,11 +149,31 @@ async def submit_test(request: Request, test_id: int, answers: str = Form(...), 
         raise HTTPException(status_code=404, detail="Test not found")
     total = len(test.questions)
     correct = 0
+    results = []
+    
     for q in test.questions:
         sel = ans.get(str(q.id))
-        if sel is None:
-            continue
-        if int(sel) == q.correct_index:
+        is_correct = False
+        if sel is not None and int(sel) == q.correct_index:
             correct += 1
+            is_correct = True
+        
+        choices_list = q.choices.split("|")
+        results.append({
+            "question": q.text,
+            "correct_answer": choices_list[q.correct_index] if q.correct_index < len(choices_list) else "N/A",
+            "user_answer": choices_list[int(sel)] if sel is not None and int(sel) < len(choices_list) else "Not answered",
+            "is_correct": is_correct
+        })
+    
+    # Generate AI explanations
+    ai_explanations = ai_helper.explain_test_answers(test.title, results)
+    
     score = {"total": total, "correct": correct}
-    return templates.TemplateResponse("test_result.html", {"request": request, "score": score, "test": test})
+    return templates.TemplateResponse("test_result.html", {
+        "request": request, 
+        "score": score, 
+        "test": test,
+        "results": results,
+        "ai_explanations": ai_explanations
+    })

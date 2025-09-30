@@ -1,5 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Результат: {{ score.correct }} / {{ score.total }}</h2>
-<a href="/tests">К списку тестов</a>
+<h2>Test Results: {{ score.correct }} / {{ score.total }}</h2>
+<p>Score: {{ (score.correct * 100 / score.total) | round(1) }}%</p>
+
+{% if results and ai_explanations %}
+<section style="margin-top: 30px;">
+  <h3>📝 Detailed Review</h3>
+  {% for i in range(results|length) %}
+  <div style="background-color: {% if results[i].is_correct %}#d4edda{% else %}#f8d7da{% endif %}; padding: 15px; margin: 15px 0; border-radius: 8px; border-left: 4px solid {% if results[i].is_correct %}#28a745{% else %}#dc3545{% endif %};">
+    <h4>Question {{ i + 1 }}: {{ results[i].question }}</h4>
+    <p><strong>Your Answer:</strong> {{ results[i].user_answer }}</p>
+    <p><strong>Correct Answer:</strong> {{ results[i].correct_answer }}</p>
+    <p><strong>Result:</strong> {% if results[i].is_correct %}✅ Correct{% else %}❌ Incorrect{% endif %}</p>
+    
+    {% if ai_explanations and i < ai_explanations|length %}
+    <div style="background-color: #fff; padding: 10px; margin-top: 10px; border-radius: 5px;">
+      <strong>🤖 AI Explanation:</strong>
+      <p>{{ ai_explanations[i] }}</p>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</section>
+{% endif %}
+
+<p style="margin-top: 30px;">
+  <a href="/tests/{{ test.id }}" style="margin-right: 15px;">🔄 Retake Test</a>
+  <a href="/tests">📚 Back to Tests</a>
+</p>
 {% endblock %}

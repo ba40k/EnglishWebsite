@@ -5,6 +5,72 @@
   <p><small>Автор: {{ article.author }} | {{ article.created_at }}</small></p>
   <div>{{ article.body | safe }}</div>
 
+  {% if ai_summary or ai_vocabulary %}
+  <section style="background-color: #f0f8ff; padding: 15px; margin: 20px 0; border-radius: 8px;">
+    <h3>🤖 AI Learning Assistant</h3>
+    
+    {% if ai_summary %}
+    <div style="margin-bottom: 15px;">
+      <h4>Summary</h4>
+      <p>{{ ai_summary }}</p>
+    </div>
+    {% endif %}
+    
+    {% if ai_vocabulary %}
+    <div>
+      <h4>Key Vocabulary</h4>
+      <ul>
+        {% for item in ai_vocabulary %}
+          <li><strong>{{ item.word }}</strong>: {{ item.definition }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </section>
+  {% endif %}
+
+  <section style="margin: 20px 0; background-color: #fff3cd; padding: 15px; border-radius: 8px;">
+    <h3>💬 Ask AI About This Article</h3>
+    <form id="ask-ai-form" style="margin-top: 10px;">
+      <input type="text" id="ai-question" placeholder="Ask a question about this article..." 
+             style="width: 70%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" required>
+      <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+        Ask AI
+      </button>
+    </form>
+    <div id="ai-answer" style="margin-top: 15px; padding: 10px; background-color: white; border-radius: 5px; display: none;">
+      <strong>AI Answer:</strong>
+      <p id="ai-answer-text"></p>
+    </div>
+  </section>
+
+  <script>
+    document.getElementById('ask-ai-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const question = document.getElementById('ai-question').value;
+      const answerDiv = document.getElementById('ai-answer');
+      const answerText = document.getElementById('ai-answer-text');
+      
+      answerDiv.style.display = 'block';
+      answerText.textContent = 'Thinking...';
+      
+      try {
+        const formData = new FormData();
+        formData.append('question', question);
+        
+        const response = await fetch('/articles/{{ article.id }}/ask-ai', {
+          method: 'POST',
+          body: formData
+        });
+        
+        const data = await response.json();
+        answerText.textContent = data.answer || 'No answer received.';
+      } catch (error) {
+        answerText.textContent = 'Error: Could not get an answer.';
+      }
+    });
+  </script>
+
   <section>
     <h3>Комментарии</h3>
     <ul>
