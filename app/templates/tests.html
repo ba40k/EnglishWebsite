@@ -1,12 +1,43 @@
 {% extends "base.html" %}
+
+{% block title %}Tests - English Learning Platform{% endblock %}
+
 {% block content %}
-<h2>Тесты</h2>
-<a href="/tests/create">Создать тест</a>
-<ul>
-  {% for t in tests %}
-    <li><a href="/tests/{{ t.id }}">{{ t.title }}</a></li>
+<div class="content-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>🧪 All Tests</h1>
+    <a href="/tests/create" class="btn">➕ Create Test</a>
+  </div>
+
+  <div class="ai-section" style="margin-bottom: 2rem;">
+    <p style="margin: 0;">
+      🤖 <strong>Pro Tip:</strong> After taking any test, you'll receive AI-powered explanations for each answer to help you learn from your mistakes!
+    </p>
+  </div>
+
+  {% if tests %}
+    <div class="card-grid">
+      {% for t in tests %}
+        <div class="card">
+          <h3 class="card-title">{{ t.title }}</h3>
+          {% if t.description %}
+            <p style="color: var(--gray); margin: 1rem 0; line-height: 1.6;">
+              {{ t.description[:150] }}{% if t.description|length > 150 %}...{% endif %}
+            </p>
+          {% endif %}
+          <div class="card-meta">
+            <span>❓ {{ t.questions|length if t.questions else 0 }} questions</span>
+          </div>
+          <a href="/tests/{{ t.id }}" class="card-link">Take Test →</a>
+        </div>
+      {% endfor %}
+    </div>
   {% else %}
-    <li>Нет тестов</li>
-  {% endfor %}
-</ul>
+    <div style="text-align: center; padding: 4rem 2rem;">
+      <h2 style="color: var(--gray);">No tests yet</h2>
+      <p style="color: var(--gray); margin: 1rem 0;">Create a test to help students practice!</p>
+      <a href="/tests/create" class="btn" style="margin-top: 1rem;">Create Your First Test</a>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

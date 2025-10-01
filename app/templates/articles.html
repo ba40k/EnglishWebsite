@@ -1,12 +1,39 @@
 {% extends "base.html" %}
+
+{% block title %}Articles - English Learning Platform{% endblock %}
+
 {% block content %}
-<h2>Статьи</h2>
-<a href="/articles/create">Создать статью</a>
-<ul>
-  {% for a in articles %}
-    <li><a href="/articles/{{ a.id }}">{{ a.title }}</a> — {{ a.author }}</li>
+<div class="content-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>📝 All Articles</h1>
+    <a href="/articles/create" class="btn">✍️ Create New Article</a>
+  </div>
+
+  {% if articles %}
+    <div class="card-grid">
+      {% for a in articles %}
+        <div class="card">
+          <h3 class="card-title">{{ a.title }}</h3>
+          <div class="card-meta">
+            <span>✍️ {{ a.author }}</span>
+            <span>•</span>
+            <span>{{ a.created_at.strftime('%B %d, %Y') if a.created_at else 'Recently' }}</span>
+          </div>
+          {% if a.body %}
+            <p style="color: var(--gray); margin: 1rem 0; line-height: 1.6;">
+              {{ a.body[:150] }}{% if a.body|length > 150 %}...{% endif %}
+            </p>
+          {% endif %}
+          <a href="/articles/{{ a.id }}" class="card-link">Read Full Article →</a>
+        </div>
+      {% endfor %}
+    </div>
   {% else %}
-    <li>Нет статей</li>
-  {% endfor %}
-</ul>
+    <div style="text-align: center; padding: 4rem 2rem;">
+      <h2 style="color: var(--gray);">No articles yet</h2>
+      <p style="color: var(--gray); margin: 1rem 0;">Be the first to create an article!</p>
+      <a href="/articles/create" class="btn" style="margin-top: 1rem;">Create Your First Article</a>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

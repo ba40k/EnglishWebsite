@@ -1,14 +1,61 @@
 {% extends "base.html" %}
+
+{% block title %}Create Test - English Learning Platform{% endblock %}
+
 {% block content %}
-<h2>Создать тест</h2>
-<form action="/tests/create" method="post">
-  <label>Название</label><br>
-  <input name="title" required><br>
-  <label>Описание</label><br>
-  <input name="description"><br>
-  <label>Questions JSON</label><br>
-  <textarea name="questions_json" rows="10" placeholder='[{"text":"Q1","choices":["A","B"],"correct_index":0}]'></textarea><br>
-  <small>questions_json — JSON-массив вопросов с полями text, choices и correct_index</small><br>
-  <button type="submit">Создать</button>
-</form>
+<div class="content-card">
+  <h1>🧪 Create New Test</h1>
+  <p style="color: var(--gray); margin-bottom: 2rem;">Create a multiple-choice test to help students practice their English skills!</p>
+
+  <form action="/tests/create" method="post">
+    <div class="form-group">
+      <label for="title">Test Title *</label>
+      <input type="text" id="title" name="title" required placeholder="e.g., Present Perfect vs Past Simple Quiz">
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea id="description" name="description" placeholder="Describe what this test covers..." style="min-height: 100px;"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="questions_json">Questions (JSON Format) *</label>
+      <textarea id="questions_json" name="questions_json" required placeholder='[{"text": "What is the past tense of 'go'?", "choices": ["went", "goed", "gone", "going"], "correct_index": 0}]' style="min-height: 250px; font-family: monospace; font-size: 0.9rem;"></textarea>
+      <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
+        💡 Format: Array of objects with "text", "choices" (array), and "correct_index" (0-based)
+      </small>
+    </div>
+
+    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+      <button type="submit">🚀 Create Test</button>
+      <a href="/tests" class="btn btn-outline">Cancel</a>
+    </div>
+  </form>
+
+  <div class="ai-section" style="margin-top: 2rem;">
+    <h3>📝 Example Question Format</h3>
+    <pre style="background: var(--white); padding: 1rem; border-radius: 8px; overflow-x: auto; margin-top: 1rem;"><code>[
+  {
+    "text": "Which sentence is correct?",
+    "choices": [
+      "I have been to London last year",
+      "I went to London last year",
+      "I have gone to London last year",
+      "I was to London last year"
+    ],
+    "correct_index": 1
+  },
+  {
+    "text": "Complete: She ___ English for 5 years.",
+    "choices": [
+      "studies",
+      "studied",
+      "has studied",
+      "is studying"
+    ],
+    "correct_index": 2
+  }
+]</code></pre>
+  </div>
+</div>
 {% endblock %}

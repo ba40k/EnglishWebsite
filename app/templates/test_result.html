@@ -1,31 +1,71 @@
 {% extends "base.html" %}
+
+{% block title %}Test Results - English Learning Platform{% endblock %}
+
 {% block content %}
-<h2>Test Results: {{ score.correct }} / {{ score.total }}</h2>
-<p>Score: {{ (score.correct * 100 / score.total) | round(1) }}%</p>
+<div class="content-card">
+  <h1>📊 Test Results</h1>
 
-{% if results and ai_explanations %}
-<section style="margin-top: 30px;">
-  <h3>📝 Detailed Review</h3>
-  {% for i in range(results|length) %}
-  <div style="background-color: {% if results[i].is_correct %}#d4edda{% else %}#f8d7da{% endif %}; padding: 15px; margin: 15px 0; border-radius: 8px; border-left: 4px solid {% if results[i].is_correct %}#28a745{% else %}#dc3545{% endif %};">
-    <h4>Question {{ i + 1 }}: {{ results[i].question }}</h4>
-    <p><strong>Your Answer:</strong> {{ results[i].user_answer }}</p>
-    <p><strong>Correct Answer:</strong> {{ results[i].correct_answer }}</p>
-    <p><strong>Result:</strong> {% if results[i].is_correct %}✅ Correct{% else %}❌ Incorrect{% endif %}</p>
-    
-    {% if ai_explanations and i < ai_explanations|length %}
-    <div style="background-color: #fff; padding: 10px; margin-top: 10px; border-radius: 5px;">
-      <strong>🤖 AI Explanation:</strong>
-      <p>{{ ai_explanations[i] }}</p>
+  <div class="score-display">
+    <h2>Your Score</h2>
+    <div class="score-percentage">
+      {{ (score.correct * 100 / score.total) | round(1) }}%
     </div>
-    {% endif %}
+    <p style="font-size: 1.5rem; margin: 0;">
+      {{ score.correct }} out of {{ score.total }} correct
+    </p>
   </div>
-  {% endfor %}
-</section>
-{% endif %}
 
-<p style="margin-top: 30px;">
-  <a href="/tests/{{ test.id }}" style="margin-right: 15px;">🔄 Retake Test</a>
-  <a href="/tests">📚 Back to Tests</a>
-</p>
+  {% if results and ai_explanations %}
+  <div style="margin-top: 3rem;">
+    <h2>📝 Detailed Review</h2>
+    <p style="color: var(--gray); margin-bottom: 2rem;">Learn from your answers with AI-powered explanations!</p>
+    
+    {% for i in range(results|length) %}
+    <div class="test-result {% if results[i].is_correct %}correct{% else %}incorrect{% endif %}">
+      <h3 style="color: var(--dark); margin-bottom: 1rem;">
+        Question {{ i + 1 }}: {{ results[i].question }}
+      </h3>
+      
+      <div style="margin: 1rem 0;">
+        <p style="margin: 0.5rem 0;">
+          <strong>Your Answer:</strong> 
+          <span style="{% if results[i].is_correct %}color: var(--success);{% else %}color: var(--danger);{% endif %}">
+            {{ results[i].user_answer }}
+          </span>
+        </p>
+        
+        {% if not results[i].is_correct %}
+        <p style="margin: 0.5rem 0;">
+          <strong>Correct Answer:</strong> 
+          <span style="color: var(--success);">{{ results[i].correct_answer }}</span>
+        </p>
+        {% endif %}
+        
+        <p style="margin: 0.5rem 0;">
+          <strong>Result:</strong> 
+          {% if results[i].is_correct %}
+            <span style="color: var(--success); font-weight: 600;">✅ Correct!</span>
+          {% else %}
+            <span style="color: var(--danger); font-weight: 600;">❌ Incorrect</span>
+          {% endif %}
+        </p>
+      </div>
+      
+      {% if ai_explanations and i < ai_explanations|length %}
+      <div style="background-color: var(--white); padding: 1rem; margin-top: 1rem; border-radius: 8px; border: 2px solid rgba(102, 126, 234, 0.2);">
+        <strong style="color: var(--primary);">🤖 AI Explanation:</strong>
+        <p style="margin-top: 0.5rem; line-height: 1.7; color: var(--dark);">{{ ai_explanations[i] }}</p>
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div style="margin-top: 3rem; text-align: center; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+    <a href="/tests/{{ test.id }}" class="btn">🔄 Retake Test</a>
+    <a href="/tests" class="btn btn-outline">📚 Back to Tests</a>
+  </div>
+</div>
 {% endblock %}

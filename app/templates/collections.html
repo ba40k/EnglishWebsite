@@ -1,12 +1,37 @@
 {% extends "base.html" %}
+
+{% block title %}Collections - English Learning Platform{% endblock %}
+
 {% block content %}
-<h2>Подборки</h2>
-<a href="/collections/create">Создать подборку</a>
-<ul>
-  {% for c in collections %}
-    <li><a href="/collections/{{ c.id }}">{{ c.title }}</a> — {{ c.created_at }}</li>
+<div class="content-card">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>📚 All Collections</h1>
+    <a href="/collections/create" class="btn">➕ Create Collection</a>
+  </div>
+
+  {% if collections %}
+    <div class="card-grid">
+      {% for c in collections %}
+        <div class="card">
+          <h3 class="card-title">{{ c.title }}</h3>
+          {% if c.description %}
+            <p style="color: var(--gray); margin: 1rem 0; line-height: 1.6;">
+              {{ c.description[:200] }}{% if c.description|length > 200 %}...{% endif %}
+            </p>
+          {% endif %}
+          <div class="card-meta">
+            <span>📄 {{ c.articles|length if c.articles else 0 }} articles</span>
+          </div>
+          <a href="/collections/{{ c.id }}" class="card-link">View Collection →</a>
+        </div>
+      {% endfor %}
+    </div>
   {% else %}
-    <li>Нет подборок</li>
-  {% endfor %}
-</ul>
+    <div style="text-align: center; padding: 4rem 2rem;">
+      <h2 style="color: var(--gray);">No collections yet</h2>
+      <p style="color: var(--gray); margin: 1rem 0;">Create a collection to organize your articles!</p>
+      <a href="/collections/create" class="btn" style="margin-top: 1rem;">Create Your First Collection</a>
+    </div>
+  {% endif %}
+</div>
 {% endblock %}

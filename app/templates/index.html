@@ -1,29 +1,92 @@
 {% extends "base.html" %}
+
+{% block title %}Home - English Learning Platform{% endblock %}
+
 {% block content %}
-<h2>Последние статьи</h2>
-<ul>
-  {% for a in articles %}
-    <li><a href="/articles/{{ a.id }}">{{ a.title }}</a> — {{ a.author }}</li>
-  {% else %}
-    <li>Нет статей</li>
-  {% endfor %}
-</ul>
+<div class="hero">
+  <h1>🌟 Master English with AI</h1>
+  <p>Learn, practice, and improve your English with AI-powered articles, tests, and instant feedback!</p>
+</div>
 
-<h2>Подборки</h2>
-<ul>
-  {% for c in collections %}
-    <li><a href="/collections/{{ c.id }}">{{ c.title }}</a></li>
+<div class="content-card">
+  <h2>📝 Latest Articles</h2>
+  {% if articles %}
+    <div class="card-grid">
+      {% for a in articles %}
+        <div class="card">
+          <h3 class="card-title">{{ a.title }}</h3>
+          <div class="card-meta">
+            <span>✍️ {{ a.author }}</span>
+            <span>•</span>
+            <span>{{ a.created_at.strftime('%b %d, %Y') if a.created_at else 'Recently' }}</span>
+          </div>
+          <a href="/articles/{{ a.id }}" class="card-link">Read Article →</a>
+        </div>
+      {% endfor %}
+    </div>
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/articles" class="btn">View All Articles</a>
+    </div>
   {% else %}
-    <li>Нет подборок</li>
-  {% endfor %}
-</ul>
+    <p style="text-align: center; color: var(--gray); padding: 2rem;">
+      No articles yet. <a href="/articles/create" class="card-link">Create the first one!</a>
+    </p>
+  {% endif %}
+</div>
 
-<h2>Тесты</h2>
-<ul>
-  {% for t in tests %}
-    <li><a href="/tests/{{ t.id }}">{{ t.title }}</a></li>
-  {% else %}
-    <li>Нет тестов</li>
-  {% endfor %}
-</ul>
+<div class="card-grid">
+  <div class="content-card" style="margin-bottom: 0;">
+    <h2>📚 Collections</h2>
+    {% if collections %}
+      <ul style="list-style: none; padding: 0;">
+        {% for c in collections %}
+          <li style="margin: 0.75rem 0;">
+            <a href="/collections/{{ c.id }}" class="card-link">{{ c.title }}</a>
+            {% if c.description %}
+              <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.25rem;">{{ c.description[:100] }}...</p>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      <div style="margin-top: 1.5rem;">
+        <a href="/collections" class="btn btn-outline">View All Collections</a>
+        <a href="/collections/create" class="btn" style="margin-left: 0.5rem;">Create Collection</a>
+      </div>
+    {% else %}
+      <p style="color: var(--gray);">No collections yet. <a href="/collections/create" class="card-link">Create one!</a></p>
+    {% endif %}
+  </div>
+
+  <div class="content-card" style="margin-bottom: 0;">
+    <h2>🧪 Tests</h2>
+    {% if tests %}
+      <ul style="list-style: none; padding: 0;">
+        {% for t in tests %}
+          <li style="margin: 0.75rem 0;">
+            <a href="/tests/{{ t.id }}" class="card-link">{{ t.title }}</a>
+            {% if t.description %}
+              <p style="color: var(--gray); font-size: 0.9rem; margin-top: 0.25rem;">{{ t.description[:100] }}...</p>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+      <div style="margin-top: 1.5rem;">
+        <a href="/tests" class="btn btn-outline">View All Tests</a>
+        <a href="/tests/create" class="btn" style="margin-left: 0.5rem;">Create Test</a>
+      </div>
+    {% else %}
+      <p style="color: var(--gray);">No tests yet. <a href="/tests/create" class="card-link">Create one!</a></p>
+    {% endif %}
+  </div>
+</div>
+
+<div class="ai-section" style="margin-top: 2rem;">
+  <h3>🤖 AI-Powered Learning Features</h3>
+  <ul style="margin-top: 1rem; line-height: 2;">
+    <li>✨ <strong>Auto-generated summaries</strong> for every article</li>
+    <li>📖 <strong>Vocabulary extraction</strong> with definitions</li>
+    <li>💬 <strong>Ask AI anything</strong> about the articles</li>
+    <li>🎯 <strong>Detailed test explanations</strong> with AI feedback</li>
+  </ul>
+</div>
 {% endblock %}

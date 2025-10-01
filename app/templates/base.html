@@ -1,24 +1,35 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Mini CMS</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}English Learning Platform{% endblock %}</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
   <header>
-    <h1><a href="/">Mini CMS</a></h1>
-    <nav>
-      <a href="/articles">Статьи</a> |
-      <a href="/collections">Подборки</a> |
-      <a href="/tests">Тесты</a>
-    </nav>
+    <div class="container">
+      <a href="/" class="logo">English Hub</a>
+      <nav>
+        <a href="/articles">📝 Articles</a>
+        <a href="/collections">📚 Collections</a>
+        <a href="/tests">🧪 Tests</a>
+        <a href="/articles/create" class="btn btn-outline" style="padding: 0.5rem 1rem;">✍️ Create Article</a>
+      </nav>
+    </div>
   </header>
+  
   <main>
-    {% block content %}{% endblock %}
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
   </main>
+  
   <footer>
-    <small>Минимальный пример на FastAPI</small>
+    <div class="container">
+      <p>✨ <strong>English Learning Platform</strong> - Powered by AI 🤖</p>
+      <p>Built with FastAPI & OpenRouter | © 2025</p>
+    </div>
   </footer>
 </body>
 </html>

@@ -1,14 +1,51 @@
 {% extends "base.html" %}
-{% block content %}
-<h2>{{ collection.title }}</h2>
-<p>{{ collection.description }}</p>
 
-<h3>Статьи в подборке</h3>
-<ul>
-  {% for a in collection.articles %}
-    <li><a href="/articles/{{ a.id }}">{{ a.title }}</a></li>
+{% block title %}{{ collection.title }} - English Learning Platform{% endblock %}
+
+{% block content %}
+<div class="content-card">
+  <h1>{{ collection.title }}</h1>
+  
+  {% if collection.description %}
+    <p style="font-size: 1.1rem; color: var(--gray); line-height: 1.7; margin: 1.5rem 0;">
+      {{ collection.description }}
+    </p>
+  {% endif %}
+
+  <div class="card-meta" style="margin-bottom: 2rem;">
+    <span>📄 {{ collection.articles|length if collection.articles else 0 }} articles in this collection</span>
+  </div>
+
+  {% if collection.articles %}
+    <h2 style="margin-top: 2rem;">Articles in this Collection</h2>
+    <div class="card-grid">
+      {% for a in collection.articles %}
+        <div class="card">
+          <h3 class="card-title">{{ a.title }}</h3>
+          <div class="card-meta">
+            <span>✍️ {{ a.author }}</span>
+            <span>•</span>
+            <span>{{ a.created_at.strftime('%b %d, %Y') if a.created_at else 'Recently' }}</span>
+          </div>
+          {% if a.body %}
+            <p style="color: var(--gray); margin: 1rem 0; line-height: 1.6;">
+              {{ a.body[:120] }}{% if a.body|length > 120 %}...{% endif %}
+            </p>
+          {% endif %}
+          <a href="/articles/{{ a.id }}" class="card-link">Read Article →</a>
+        </div>
+      {% endfor %}
+    </div>
   {% else %}
-    <li>Нет статей в подборке</li>
-  {% endfor %}
-</ul>
+    <div class="ai-section">
+      <p style="text-align: center; margin: 0;">
+        📝 No articles in this collection yet. Articles can be added when creating or editing them.
+      </p>
+    </div>
+  {% endif %}
+</div>
+
+<div style="margin-top: 2rem; text-align: center;">
+  <a href="/collections" class="btn btn-outline">← Back to Collections</a>
+</div>
 {% endblock %}

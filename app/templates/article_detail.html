@@ -1,48 +1,60 @@
 {% extends "base.html" %}
+
+{% block title %}{{ article.title }} - English Learning Platform{% endblock %}
+
 {% block content %}
-<article>
-  <h2>{{ article.title }}</h2>
-  <p><small>Автор: {{ article.author }} | {{ article.created_at }}</small></p>
-  <div>{{ article.body | safe }}</div>
+<div class="content-card">
+  <h1>{{ article.title }}</h1>
+  <div class="card-meta" style="margin-bottom: 2rem;">
+    <span>✍️ {{ article.author }}</span>
+    <span>•</span>
+    <span>{{ article.created_at.strftime('%B %d, %Y at %I:%M %p') if article.created_at else 'Recently' }}</span>
+  </div>
+  
+  <div style="font-size: 1.1rem; line-height: 1.8; color: var(--dark);">
+    {{ article.body | safe }}
+  </div>
 
   {% if ai_summary or ai_vocabulary %}
-  <section style="background-color: #f0f8ff; padding: 15px; margin: 20px 0; border-radius: 8px;">
+  <div class="ai-summary">
     <h3>🤖 AI Learning Assistant</h3>
     
     {% if ai_summary %}
-    <div style="margin-bottom: 15px;">
-      <h4>Summary</h4>
-      <p>{{ ai_summary }}</p>
+    <div style="margin: 1rem 0;">
+      <h4>📋 Summary</h4>
+      <p style="line-height: 1.8;">{{ ai_summary }}</p>
     </div>
     {% endif %}
     
     {% if ai_vocabulary %}
-    <div>
-      <h4>Key Vocabulary</h4>
-      <ul>
+    <div style="margin: 1.5rem 0;">
+      <h4>📖 Key Vocabulary</h4>
+      <ul class="vocabulary-list">
         {% for item in ai_vocabulary %}
-          <li><strong>{{ item.word }}</strong>: {{ item.definition }}</li>
+          <li>
+            <strong>{{ item.word }}</strong>: {{ item.definition }}
+          </li>
         {% endfor %}
       </ul>
     </div>
     {% endif %}
-  </section>
+  </div>
   {% endif %}
 
-  <section style="margin: 20px 0; background-color: #fff3cd; padding: 15px; border-radius: 8px;">
+  <div class="ai-section">
     <h3>💬 Ask AI About This Article</h3>
-    <form id="ask-ai-form" style="margin-top: 10px;">
-      <input type="text" id="ai-question" placeholder="Ask a question about this article..." 
-             style="width: 70%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;" required>
-      <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-        Ask AI
-      </button>
+    <p style="color: var(--gray); margin-bottom: 1rem;">Have questions? Ask AI for help understanding vocabulary, grammar, or concepts!</p>
+    <form id="ask-ai-form">
+      <div style="display: flex; gap: 0.5rem;">
+        <input type="text" id="ai-question" placeholder="e.g., What does 'concept' mean? or Explain this paragraph..." required>
+        <button type="submit" style="white-space: nowrap;">Ask AI</button>
+      </div>
     </form>
-    <div id="ai-answer" style="margin-top: 15px; padding: 10px; background-color: white; border-radius: 5px; display: none;">
-      <strong>AI Answer:</strong>
-      <p id="ai-answer-text"></p>
+    <div id="ai-answer" style="display: none;">
+      <strong>🤖 AI Answer:</strong>
+      <p id="ai-answer-text" style="margin-top: 0.5rem; line-height: 1.7;"></p>
     </div>
-  </section>
+  </div>
 
   <script>
     document.getElementById('ask-ai-form').addEventListener('submit', async (e) => {
@@ -52,7 +64,7 @@
       const answerText = document.getElementById('ai-answer-text');
       
       answerDiv.style.display = 'block';
-      answerText.textContent = 'Thinking...';
+      answerText.innerHTML = '<em class="loading">🤔 Thinking...</em>';
       
       try {
         const formData = new FormData();
@@ -66,29 +78,46 @@
         const data = await response.json();
         answerText.textContent = data.answer || 'No answer received.';
       } catch (error) {
-        answerText.textContent = 'Error: Could not get an answer.';
+        answerText.innerHTML = '<span style="color: var(--danger);">❌ Error: Could not get an answer.</span>';
       }
     });
   </script>
 
-  <section>
-    <h3>Комментарии</h3>
-    <ul>
-      {% for c in article.comments %}
-        <li><strong>{{ c.author }}</strong>: {{ c.text }} <small>{{ c.created_at }}</small></li>
-      {% else %}
-        <li>Пока нет комментариев</li>
-      {% endfor %}
-    </ul>
+  <div class="comments-section">
+    <h3>💬 Comments</h3>
+    
+    {% if article.comments %}
+      <div style="margin: 1.5rem 0;">
+        {% for c in article.comments %}
+          <div class="comment">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+              <span class="comment-author">{{ c.author }}</span>
+              <span class="comment-time">{{ c.created_at.strftime('%b %d, %Y') if c.created_at else 'Recently' }}</span>
+            </div>
+            <p style="color: var(--dark);">{{ c.text }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p style="color: var(--gray); margin: 1rem 0;">No comments yet. Be the first to comment!</p>
+    {% endif %}
 
-    <h4>Оставить комментарий</h4>
+    <h4 style="margin-top: 2rem;">Leave a Comment</h4>
     <form action="/articles/{{ article.id }}/comments" method="post">
-      <input type="text" name="author" placeholder="Ваше имя">
-      <br>
-      <textarea name="text" required placeholder="Текст комментария"></textarea>
-      <br>
-      <button type="submit">Отправить</button>
+      <div class="form-group">
+        <label for="author">Your Name</label>
+        <input type="text" id="author" name="author" placeholder="Anonymous" value="Anonymous">
+      </div>
+      <div class="form-group">
+        <label for="text">Comment</label>
+        <textarea id="text" name="text" required placeholder="Share your thoughts..."></textarea>
+      </div>
+      <button type="submit">💬 Post Comment</button>
     </form>
-  </section>
-</article>
+  </div>
+</div>
+
+<div style="margin-top: 2rem; text-align: center;">
+  <a href="/articles" class="btn btn-outline">← Back to Articles</a>
+</div>
 {% endblock %}

@@ -1,33 +1,99 @@
 {% extends "base.html" %}
+
+{% block title %}{{ test.title }} - English Learning Platform{% endblock %}
+
 {% block content %}
-<h2>{{ test.title }}</h2>
-<p>{{ test.description }}</p>
-<form action="/tests/{{ test.id }}/submit" method="post" id="testform">
-  {% for q in questions %}
-    <div>
-      <p><strong>{{ loop.index }}. {{ q.text }}</strong></p>
-      {% for choice in q.choices %}
-        <label>
-          <input type="radio" name="q{{ q.id }}" value="{{ loop.index0 }}"> {{ choice }}
-        </label><br>
-      {% endfor %}
+<div class="content-card">
+  <h1>{{ test.title }}</h1>
+  
+  {% if test.description %}
+    <p style="font-size: 1.1rem; color: var(--gray); line-height: 1.7; margin: 1.5rem 0;">
+      {{ test.description }}
+    </p>
+  {% endif %}
+
+  <div class="card-meta" style="margin-bottom: 2rem;">
+    <span>❓ {{ questions|length }} questions</span>
+  </div>
+
+  <div class="ai-section" style="margin-bottom: 2rem;">
+    <p style="margin: 0;">
+      🤖 <strong>AI Feedback:</strong> After submitting, you'll receive detailed AI-generated explanations for each answer!
+    </p>
+  </div>
+
+  <form id="test-form" action="/tests/{{ test.id }}/submit" method="post">
+    {% for q in questions %}
+      <div class="content-card" style="margin-bottom: 1.5rem;">
+        <h3 style="color: var(--dark); margin-bottom: 1rem;">
+          Question {{ loop.index }}: {{ q.text }}
+        </h3>
+        
+        <div style="margin-left: 1rem;">
+          {% for choice in q.choices %}
+            <div style="margin: 0.75rem 0;">
+              <label style="display: flex; align-items: center; cursor: pointer; padding: 0.75rem; border-radius: 8px; transition: var(--transition); border: 2px solid transparent;">
+                <input type="radio" name="q{{ q.id }}" value="{{ loop.index0 }}" required style="margin-right: 0.75rem; width: auto; cursor: pointer;">
+                <span style="font-weight: normal;">{{ choice }}</span>
+              </label>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+
+    <input type="hidden" name="answers" id="answers-input">
+    
+    <div style="text-align: center; margin-top: 2rem;">
+      <button type="submit" style="font-size: 1.1rem; padding: 1rem 2rem;">
+        ✅ Submit Test
+      </button>
     </div>
-  {% endfor %}
-  <input type="hidden" name="answers" id="answers">
-  <button type="button" onclick="submitAnswers()">Отправить</button>
-</form>
+  </form>
+</div>
 
 <script>
-function submitAnswers(){
-  const data = {};
-  {% for q in questions %}
-    const els = document.getElementsByName('q{{ q.id }}');
-    let sel = null;
-    for(let i=0;i<els.length;i++){ if(els[i].checked){ sel = els[i].value; break; } }
-    if(sel !== null) data['{{ q.id }}'] = parseInt(sel);
-  {% endfor %}
-  document.getElementById('answers').value = JSON.stringify(data);
-  document.getElementById('testform').submit();
-}
+  document.getElementById('test-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const answers = {};
+    {% for q in questions %}
+      const q{{ q.id }} = document.querySelector('input[name="q{{ q.id }}"]:checked');
+      if (q{{ q.id }}) {
+        answers['{{ q.id }}'] = q{{ q.id }}.value;
+      }
+    {% endfor %}
+    document.getElementById('answers-input').value = JSON.stringify(answers);
+    this.submit();
+  });
+
+  // Add hover effect to radio labels
+  document.querySelectorAll('label').forEach(label => {
+    label.addEventListener('mouseenter', function() {
+      this.style.backgroundColor = 'rgba(102, 126, 234, 0.05)';
+      this.style.borderColor = 'var(--primary)';
+    });
+    label.addEventListener('mouseleave', function() {
+      if (!this.querySelector('input').checked) {
+        this.style.backgroundColor = 'transparent';
+        this.style.borderColor = 'transparent';
+      }
+    });
+  });
+
+  // Highlight selected answers
+  document.querySelectorAll('input[type="radio"]').forEach(radio => {
+    radio.addEventListener('change', function() {
+      document.querySelectorAll(`input[name="${this.name}"]`).forEach(r => {
+        r.parentElement.style.backgroundColor = 'transparent';
+        r.parentElement.style.borderColor = 'transparent';
+      });
+      this.parentElement.style.backgroundColor = 'rgba(102, 126, 234, 0.1)';
+      this.parentElement.style.borderColor = 'var(--primary)';
+    });
+  });
 </script>
+
+<div style="margin-top: 2rem; text-align: center;">
+  <a href="/tests" class="btn btn-outline">← Back to Tests</a>
+</div>
 {% endblock %}
