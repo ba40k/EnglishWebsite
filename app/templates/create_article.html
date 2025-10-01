@@ -1,50 +1,15 @@
 {% extends "base.html" %}
-
-{% block title %}Create Article - English Learning Platform{% endblock %}
-
 {% block content %}
-<div class="content-card">
-  <h1>✍️ Create New Article</h1>
-  <p style="color: var(--gray); margin-bottom: 2rem;">Share your knowledge and help others learn English!</p>
-
-  <form action="/articles/create" method="post">
-    <div class="form-group">
-      <label for="title">Article Title *</label>
-      <input type="text" id="title" name="title" required placeholder="e.g., Understanding Past Perfect Tense">
-    </div>
-
-    <div class="form-group">
-      <label for="author">Author Name</label>
-      <input type="text" id="author" name="author" placeholder="Anonymous" value="Anonymous">
-    </div>
-
-    <div class="form-group">
-      <label for="body">Article Content *</label>
-      <textarea id="body" name="body" required placeholder="Write your article here... You can explain grammar rules, share vocabulary tips, or create reading comprehension passages." style="min-height: 300px;"></textarea>
-      <small style="color: var(--gray);">💡 Tip: The AI will automatically generate a summary and vocabulary list for your article!</small>
-    </div>
-
-    <div class="form-group">
-      <label for="collection_ids">Add to Collections (optional)</label>
-      <input type="text" id="collection_ids" name="collection_ids" placeholder="e.g., 1,2,3 (comma-separated collection IDs)">
-      <small style="color: var(--gray); display: block; margin-top: 0.5rem;">
-        Available collections:
-        {% if collections %}
-          {% for c in collections %}
-            <span style="display: inline-block; margin: 0.25rem 0.5rem 0.25rem 0; background: var(--light); padding: 0.25rem 0.5rem; border-radius: 4px;">
-              {{ c.id }}: {{ c.title }}
-            </span>
-          {% endfor %}
-        {% else %}
-          None yet. <a href="/collections/create" class="card-link">Create one</a>
-        {% endif %}
-      </small>
-    </div>
-
-    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-      <button type="submit">🚀 Publish Article</button>
-      <a href="/articles" class="btn btn-outline">Cancel</a>
-    </div>
-  </form>
-</div>
+<h2>Создать статью</h2>
+<form action="/articles/create" method="post">
+  <label>Заголовок</label><br>
+  <input name="title" required><br>
+  <label>Текст</label><br>
+  <textarea name="body" rows="8" required></textarea><br>
+  <label>Автор</label><br>
+  <input name="author"><br>
+  <label>ID подборок (через запятую)</label><br>
+  <input name="collection_ids" placeholder="1,2"><br>
+  <button type="submit">Создать</button>
+</form>
 {% endblock %}
